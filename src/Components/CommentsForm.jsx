@@ -1,16 +1,32 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 
-const CommentsForm = () => {
+const CommentsForm = ({ addComment}) => {
+	const { register, errors, handleSubmit } = useForm();
+
+	const onSubmit = (data, e) => {
+		addComment(data)
+		e.target.reset();
+	};
+
 	return (
-		<form className="mt-5">
+		<form onSubmit={handleSubmit(onSubmit)} className="mt-5">
 			<div className="form-group">
-				<label htmlFor="">Title</label>
+				<label htmlFor="">Name</label>
 				<input
 					type="text"
 					className="form-control"
-					name="title"
-					placeholder="Add a title"
+					name="name"
+					placeholder="Your name"
+					ref={register({
+						required: { value: true, message: "Name is required" },
+					})}
 				/>
+				{errors && (
+					<small className="text-danger mt-0">
+						{errors.name && errors.name.message}
+					</small>
+				)}
 			</div>
 			<div className="form-group">
 				<label htmlFor="">Description</label>
@@ -18,7 +34,16 @@ const CommentsForm = () => {
 					className="form-control"
 					name="description"
 					placeholder="Add a description"
+					ref={register({
+						required: { value: true, message: "Description is required" },
+						minLength: { value: 10, message: "Min 10 characters" },
+					})}
 				/>
+				{errors && (
+					<small className="text-danger">
+						{errors.description && errors.description.message}
+					</small>
+				)}
 			</div>
 			<div className="d-flex justify-content-center">
 				<button className="btn btn-primary" type="submit">
